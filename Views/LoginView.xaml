@@ -1,0 +1,144 @@
+﻿<UserControl x:Class="ProjectManagerPro_SOLID.Views.LoginView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProjectManagerPro_SOLID.Views"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+             xmlns:vm="clr-namespace:ProjectManagerPro_SOLID.ViewModels"
+             mc:Ignorable="d" 
+             d:DesignHeight="450" d:DesignWidth="800">
+    
+    <UserControl.DataContext>
+        <vm:LoginViewModel />
+    </UserControl.DataContext>
+    
+    <Grid MouseDown="Grid_MouseDown">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <Grid Grid.Column="0">
+            <Viewbox
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Stretch="Uniform">
+                <StackPanel
+                Margin="20"
+                HorizontalAlignment="Center"
+                VerticalAlignment="Center">
+
+                    <TextBlock
+                    FontSize="26"
+                    FontWeight="Bold"
+                    Text="ProjectManager Pro"
+                    TextAlignment="Center">
+                        <TextBlock.Foreground>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0.0" Color="#1565C0" />
+                                <GradientStop Offset="1.0" Color="#318CE7" />
+                            </LinearGradientBrush>
+                        </TextBlock.Foreground>
+
+                    </TextBlock>
+
+                    <Image Source="/Assets/Images/login-image.png" Stretch="Uniform" />
+
+                    <TextBlock
+                    FontSize="12"
+                    Foreground="Gray"
+                    Text="Organize tasks, track progress, and collaborate effectively."
+                    TextAlignment="Center"
+                    TextWrapping="Wrap" />
+                </StackPanel>
+            </Viewbox>
+        </Grid>
+
+        <Grid Grid.Column="1">
+            <Grid.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                    <GradientStop Offset="0.0" Color="#ADD8E6" />
+                    <GradientStop Offset="1.0" Color="#E0FFFF" />
+                </LinearGradientBrush>
+            </Grid.Background>
+            <Border
+            Padding="30"
+            HorizontalAlignment="Stretch"
+            VerticalAlignment="Center"
+            materialDesign:ElevationAssist.Elevation="Dp2"
+            Background="{DynamicResource MaterialDesignCardBackground}"
+            CornerRadius="10">
+
+                <StackPanel>
+                    <TextBlock
+                    Margin="0,0,0,30"
+                    HorizontalAlignment="Center"
+                    FontSize="40"
+                    FontWeight="Bold"
+                    Foreground="{DynamicResource PrimaryHueMidBrush}"
+                    Text="Welcome Back"
+                    TextWrapping="Wrap" />
+
+                    <TextBox
+                    MinHeight="40"
+                    Margin="0,0,0,16"
+                    materialDesign:HintAssist.Hint="Username"
+                    FontSize="20"
+                    Style="{StaticResource MaterialDesignOutlinedTextBox}"
+                    Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <PasswordBox
+                    x:Name="PasswordBox"
+                    Margin="0,0,0,16"
+                    materialDesign:HintAssist.Hint="Password"
+                    FontSize="20"
+                    PasswordChanged="PasswordBox_PasswordChanged"
+                    Style="{StaticResource MaterialDesignOutlinedPasswordBox}" />
+                    <CheckBox
+                    HorizontalAlignment="Right"
+                    VerticalAlignment="Center"
+                    VerticalContentAlignment="Center"
+                    Content="Remember Me"
+                    FontSize="16"
+                    IsChecked="{Binding RememberMe}" />
+                    <TextBlock
+                    Margin="0,0,0,10"
+                    FontSize="12"
+                    Foreground="Red"
+                    Text="{Binding ValidationError}"
+                    TextWrapping="Wrap" />
+                    <StackPanel
+                    x:Name="ProgressBarStatus"
+                    Margin="0,0,0,10"
+                    Orientation="Horizontal"
+                    Visibility="{Binding ProgressEnable}">
+                        <TextBlock
+                        FontFamily="Cascadia Code"
+                        FontSize="14"
+                        Foreground="Black"
+                        Text="Processing" />
+                        <ProgressBar
+                        Width="100"
+                        Margin="20,0,0,0"
+                        VerticalAlignment="Center"
+                        BorderThickness="0"
+                        Foreground="PaleVioletRed"
+                        IsIndeterminate="True" />
+                    </StackPanel>
+                    <Button
+                    x:Name="LoginButton"
+                    Margin="0,0,0,10"
+                    Command="{Binding LoginCommand}"
+                    Content="Login"
+                    FontSize="14" />
+                    <Button
+                    Command="{Binding GoToRegisterCommand}"
+                    Content="Register Instead"
+                    FontSize="14"
+                    Style="{StaticResource MaterialDesignOutlinedButton}" />
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Grid>
+</UserControl>

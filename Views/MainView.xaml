@@ -1,0 +1,769 @@
+﻿<UserControl
+    x:Class="ProjectManagerPro_SOLID.Views.MainView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:lvc="clr-namespace:LiveChartsCore.SkiaSharpView.WPF;assembly=LiveChartsCore.SkiaSharpView.WPF"
+    xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:view="clr-namespace:ProjectManagerPro_SOLID.Views"
+    xmlns:viewmodels="clr-namespace:ProjectManagerPro_SOLID.ViewModels"
+    HorizontalAlignment="Stretch"
+    VerticalAlignment="Stretch"
+    d:DataContext="{d:DesignInstance Type=viewmodels:MainViewModel}"
+    mc:Ignorable="d">
+    <Grid
+        Margin="5"
+        HorizontalAlignment="Stretch"
+        VerticalAlignment="Stretch">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="3*" />
+            <RowDefinition Height="1.5*" />
+        </Grid.RowDefinitions>
+        <view:Loader
+            Grid.RowSpan="4"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Panel.ZIndex="1"
+            Visibility="{Binding Loading}" />
+        <!--  Loggedin Uesr Details  -->
+        <materialDesign:Card
+            Grid.Row="0"
+            Margin="5"
+            HorizontalAlignment="Stretch"
+            materialDesign:ElevationAssist.Elevation="Dp2"
+            UniformCornerRadius="5">
+            <materialDesign:Card.Background>
+                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                    <GradientStop Offset="1" Color="#FF90CAF9" />
+                    <GradientStop Offset="0" Color="#FF42A5F5" />
+                </LinearGradientBrush>
+            </materialDesign:Card.Background>
+            <Grid Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Grid.Column="0" Orientation="Horizontal">
+                    <TextBlock
+                        VerticalAlignment="Center"
+                        FontSize="25"
+                        FontWeight="Bold"
+                        Foreground="White"
+                        Text="{Binding Username, StringFormat='Welcome, {0}'}" />
+                    <Border
+                        Margin="10,0"
+                        Padding="20,5"
+                        VerticalAlignment="Center"
+                        Background="#FFFFFF"
+                        CornerRadius="12"
+                        Effect="{DynamicResource DropShadow}">
+                        <TextBlock
+                            VerticalAlignment="Center"
+                            FontSize="18"
+                            FontWeight="Bold"
+                            Foreground="#1E88E5"
+                            Text="{Binding UserRole}" />
+                    </Border>
+                </StackPanel>
+
+                <Button
+                    Grid.Column="1"
+                    Margin="10,0,0,0"
+                    Background="red"
+                    Click="Logout_Click"
+                    Content="Logout" />
+            </Grid>
+        </materialDesign:Card>
+
+        <!--  Header  -->
+        <Grid Grid.Row="1" Margin="0,10">
+            <StackPanel
+                Margin="0,0,0,10"
+                HorizontalAlignment="Left"
+                Orientation="Horizontal">
+                <Button
+                    Margin="10,0,0,0"
+                    BorderThickness="0"
+                    Command="{Binding AddTaskCommand}"
+                    Content="Add Task">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource MaterialButtonStyle}" TargetType="Button">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding UserRole}" Value="Tester">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                                <DataTrigger Binding="{Binding UserRole}" Value="Admin">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+
+            </StackPanel>
+            <StackPanel
+                Margin="0,0,0,5"
+                HorizontalAlignment="Right"
+                Orientation="Horizontal">
+                <ComboBox
+                    Width="200"
+                    DisplayMemberPath="Name"
+                    FontSize="20"
+                    FontWeight="SemiBold"
+                    ItemsSource="{Binding Projects}"
+                    SelectedItem="{Binding SelectedProject, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    SelectionChanged="ComboBox_SelectionChanged" />
+                <Button
+                    Margin="10,0,0,0"
+                    Command="{Binding AddProjectCommand}"
+                    Content="Add Project">
+                    <Button.Style>
+                        <Style BasedOn="{StaticResource MaterialButtonStyle}" TargetType="Button">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding UserRole}" Value="Admin">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Button.Style>
+                </Button>
+            </StackPanel>
+        </Grid>
+        <ScrollViewer
+            Grid.Row="2"
+            CanContentScroll="False"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <Grid>
+                <!--  Task Board  -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <!--  To-Do  -->
+                    <materialDesign:Card
+                        Grid.Column="0"
+                        Margin="5,0"
+                        materialDesign:ElevationAssist.Elevation="Dp2"
+                        UniformCornerRadius="5">
+                        <materialDesign:Card.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0" Color="#FFE3F2FD" />
+                                <GradientStop Offset="1" Color="#FFBBDEFB" />
+                            </LinearGradientBrush>
+                        </materialDesign:Card.Background>
+                        <Grid Margin="0,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10"
+                                HorizontalAlignment="Center"
+                                FontSize="25"
+                                FontWeight="Bold"
+                                Text="To-Do" />
+                            <ListBox
+                                x:Name="ToDoList"
+                                Grid.Row="1"
+                                HorizontalContentAlignment="Stretch"
+                                AllowDrop="True"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                DragOver="ListBox_DragOver"
+                                Drop="ListBox_Drop"
+                                ItemsSource="{Binding ToDoTasks}"
+                                ScrollViewer.CanContentScroll="False"
+                                SelectedItem="{Binding SelectedTask}">
+                                <!--  Handle click and drag at ListBoxItem level  -->
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <EventSetter Event="PreviewMouseLeftButtonUp" Handler="Task_Click" />
+                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListBoxItem_PreviewMouseLeftButtonDown" />
+                                        <EventSetter Event="MouseMove" Handler="ListBoxItem_MouseMove" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <materialDesign:Card
+                                            Margin="0,6,0,6"
+                                            Padding="8"
+                                            materialDesign:ElevationAssist.Elevation="Dp2"
+                                            Background="{DynamicResource MaterialDesignPaper}">
+                                            <materialDesign:Card.ContextMenu>
+                                                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" Opened="ContextMenu_Opened">
+                                                    <MenuItem Click="MoveInProgress_Click" Header="Move to In Progress" />
+                                                    <MenuItem Click="MoveInReview_Click" Header="Move to In Review" />
+                                                    <MenuItem Click="MoveCompleted_Click" Header="Move to Completed" />
+                                                </ContextMenu>
+                                            </materialDesign:Card.ContextMenu>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <!--  Task Title  -->
+                                                <TextBlock
+                                                    Grid.Row="0"
+                                                    Grid.Column="0"
+                                                    FontSize="20"
+                                                    FontWeight="Bold"
+                                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                                    Text="{Binding Title}"
+                                                    TextWrapping="Wrap" />
+                                                <!--  Priority Badge  -->
+                                                <Border
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Margin="0,0,0,10"
+                                                    Style="{StaticResource PriorityBadgeStyle}">
+                                                    <TextBlock
+                                                        FontSize="16"
+                                                        FontWeight="Bold"
+                                                        Foreground="White"
+                                                        Text="{Binding Priority}" />
+                                                </Border>
+                                                <!--  Task Description  -->
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="2"
+                                                    MinWidth="200"
+                                                    Margin="0,4,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    FontSize="16"
+                                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                                    Text="{Binding Description}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap" />
+                                                <!--  Created Date (bottom-right corner)  -->
+                                                <Border
+                                                    Grid.Row="1"
+                                                    Grid.Column="1"
+                                                    Margin="8,0,0,0"
+                                                    Padding="2"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Bottom"
+                                                    BorderThickness="2"
+                                                    CornerRadius="5">
+                                                    <Border.BorderBrush>
+                                                        <LinearGradientBrush StartPoint="0,1" EndPoint="1,1">
+                                                            <!--<GradientStop Offset="0.0" Color="Red" />-->
+                                                            <GradientStop Offset="0.0" Color="White" />
+                                                            <GradientStop Offset="1.0" Color="Black" />
+                                                            <!--<GradientStop Offset="1.0" Color="Green" />-->
+                                                        </LinearGradientBrush>
+                                                    </Border.BorderBrush>
+                                                    <TextBlock
+                                                        FontSize="16"
+                                                        Foreground="{DynamicResource MaterialDesignBody}"
+                                                        Text="{Binding StartDate, StringFormat=d}" />
+                                                </Border>
+                                            </Grid>
+                                        </materialDesign:Card>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </materialDesign:Card>
+
+                    <!--  In Progress  -->
+                    <materialDesign:Card
+                        Grid.Column="1"
+                        Margin="5,0"
+                        materialDesign:ElevationAssist.Elevation="Dp2"
+                        UniformCornerRadius="5">
+                        <materialDesign:Card.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0" Color="#FFF3E0" />
+                                <GradientStop Offset="1" Color="#FFE0B2" />
+                            </LinearGradientBrush>
+                        </materialDesign:Card.Background>
+                        <Grid Margin="0,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10"
+                                HorizontalAlignment="Center"
+                                FontSize="25"
+                                FontWeight="Bold"
+                                Text="In Progress" />
+                            <ListBox
+                                Grid.Row="1"
+                                HorizontalContentAlignment="Stretch"
+                                AllowDrop="True"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                DragOver="ListBox_DragOver"
+                                Drop="ListBox_Drop"
+                                ItemsSource="{Binding InProgressTasks}"
+                                ScrollViewer.CanContentScroll="False"
+                                SelectedItem="{Binding SelectedTask}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <EventSetter Event="PreviewMouseLeftButtonUp" Handler="Task_Click" />
+                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListBoxItem_PreviewMouseLeftButtonDown" />
+                                        <EventSetter Event="MouseMove" Handler="ListBoxItem_MouseMove" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <materialDesign:Card
+                                            Margin="0,6,0,6"
+                                            Padding="8"
+                                            materialDesign:ElevationAssist.Elevation="Dp2"
+                                            Background="{DynamicResource MaterialDesignPaper}">
+                                            <materialDesign:Card.ContextMenu>
+                                                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" Opened="ContextMenu_Opened">
+                                                    <MenuItem Click="MoveToDo_Click" Header="Move to To-Do" />
+                                                    <MenuItem Click="MoveInReview_Click" Header="Move to In Review" />
+                                                    <MenuItem Click="MoveCompleted_Click" Header="Move to Completed" />
+                                                </ContextMenu>
+                                            </materialDesign:Card.ContextMenu>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <!--  Task Title  -->
+                                                <TextBlock
+                                                    Grid.Row="0"
+                                                    Grid.Column="0"
+                                                    FontSize="20"
+                                                    FontWeight="Bold"
+                                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                                    Text="{Binding Title}"
+                                                    TextWrapping="Wrap" />
+                                                <!--  Priority Badge  -->
+                                                <Border
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Margin="0,0,0,10"
+                                                    Style="{StaticResource PriorityBadgeStyle}">
+                                                    <TextBlock
+                                                        FontSize="16"
+                                                        FontWeight="Bold"
+                                                        Foreground="White"
+                                                        Text="{Binding Priority}" />
+                                                </Border>
+                                                <!--  Task Description  -->
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="2"
+                                                    MinWidth="200"
+                                                    Margin="0,4,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    FontSize="16"
+                                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                                    Text="{Binding Description}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap" />
+                                                <!--  Created Date (bottom-right corner)  -->
+                                                <Border
+                                                    Grid.Row="1"
+                                                    Grid.Column="1"
+                                                    Margin="8,0,0,0"
+                                                    Padding="2"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Bottom"
+                                                    BorderThickness="2"
+                                                    CornerRadius="5">
+                                                    <Border.BorderBrush>
+                                                        <LinearGradientBrush StartPoint="0,1" EndPoint="1,1">
+                                                            <!--<GradientStop Offset="0.0" Color="Red" />-->
+                                                            <GradientStop Offset="0.0" Color="White" />
+                                                            <GradientStop Offset="1.0" Color="Black" />
+                                                            <!--<GradientStop Offset="1.0" Color="Green" />-->
+                                                        </LinearGradientBrush>
+                                                    </Border.BorderBrush>
+                                                    <TextBlock
+                                                        FontSize="16"
+                                                        Foreground="{DynamicResource MaterialDesignBody}"
+                                                        Text="{Binding StartDate, StringFormat=d}" />
+                                                </Border>
+
+                                            </Grid>
+                                        </materialDesign:Card>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </materialDesign:Card>
+
+                    <!--  In Review  -->
+                    <materialDesign:Card
+                        Grid.Column="2"
+                        Margin="5,0"
+                        materialDesign:ElevationAssist.Elevation="Dp2"
+                        UniformCornerRadius="5">
+                        <materialDesign:Card.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0" Color="#F3E5F5" />
+                                <GradientStop Offset="1" Color="#E1BEE7" />
+                            </LinearGradientBrush>
+                        </materialDesign:Card.Background>
+                        <Grid Margin="0,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10"
+                                HorizontalAlignment="Center"
+                                FontSize="25"
+                                FontWeight="Bold"
+                                Text="In Review" />
+                            <ListBox
+                                Grid.Row="1"
+                                HorizontalContentAlignment="Stretch"
+                                AllowDrop="True"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                DragOver="ListBox_DragOver"
+                                Drop="ListBox_Drop"
+                                ItemsSource="{Binding InReviewTasks}"
+                                ScrollViewer.CanContentScroll="False"
+                                SelectedItem="{Binding SelectedTask}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <EventSetter Event="PreviewMouseLeftButtonUp" Handler="Task_Click" />
+                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListBoxItem_PreviewMouseLeftButtonDown" />
+                                        <EventSetter Event="MouseMove" Handler="ListBoxItem_MouseMove" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <materialDesign:Card
+                                            Margin="0,6,0,6"
+                                            Padding="8"
+                                            materialDesign:ElevationAssist.Elevation="Dp2"
+                                            Background="{DynamicResource MaterialDesignPaper}">
+                                            <materialDesign:Card.ContextMenu>
+                                                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" Opened="ContextMenu_Opened">
+                                                    <MenuItem Click="MoveToDo_Click" Header="Move to To-Do" />
+                                                    <MenuItem Click="MoveInProgress_Click" Header="Move to In Progress" />
+                                                    <MenuItem Click="MoveCompleted_Click" Header="Move to Completed" />
+                                                </ContextMenu>
+                                            </materialDesign:Card.ContextMenu>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <!--  Task Title  -->
+                                                <TextBlock
+                                                    Grid.Row="0"
+                                                    Grid.Column="0"
+                                                    FontSize="20"
+                                                    FontWeight="Bold"
+                                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                                    Text="{Binding Title}"
+                                                    TextWrapping="Wrap" />
+                                                <!--  Priority Badge  -->
+                                                <Border
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Margin="0,0,0,10"
+                                                    Style="{StaticResource PriorityBadgeStyle}">
+                                                    <TextBlock
+                                                        FontSize="16"
+                                                        FontWeight="Bold"
+                                                        Foreground="White"
+                                                        Text="{Binding Priority}" />
+                                                </Border>
+                                                <!--  Task Description  -->
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="2"
+                                                    MinWidth="200"
+                                                    Margin="0,4,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    FontSize="16"
+                                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                                    Text="{Binding Description}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap" />
+                                                <!--  Created Date (bottom-right corner)  -->
+                                                <Border
+                                                    Grid.Row="1"
+                                                    Grid.Column="1"
+                                                    Margin="8,0,0,0"
+                                                    Padding="2"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Bottom"
+                                                    BorderThickness="2"
+                                                    CornerRadius="5">
+                                                    <Border.BorderBrush>
+                                                        <LinearGradientBrush StartPoint="0,1" EndPoint="1,1">
+                                                            <!--<GradientStop Offset="0.0" Color="Red" />-->
+                                                            <GradientStop Offset="0.0" Color="White" />
+                                                            <GradientStop Offset="1.0" Color="Black" />
+                                                            <!--<GradientStop Offset="1.0" Color="Green" />-->
+                                                        </LinearGradientBrush>
+                                                    </Border.BorderBrush>
+                                                    <TextBlock
+                                                        FontSize="16"
+                                                        Foreground="{DynamicResource MaterialDesignBody}"
+                                                        Text="{Binding StartDate, StringFormat=d}" />
+                                                </Border>
+                                            </Grid>
+                                        </materialDesign:Card>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </materialDesign:Card>
+
+                    <!--  Completed  -->
+                    <materialDesign:Card
+                        Grid.Column="3"
+                        Margin="5,0"
+                        materialDesign:ElevationAssist.Elevation="Dp2"
+                        UniformCornerRadius="5">
+                        <materialDesign:Card.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                <GradientStop Offset="0" Color="#E8F5E9" />
+                                <GradientStop Offset="1" Color="#C8E6C9" />
+                            </LinearGradientBrush>
+                        </materialDesign:Card.Background>
+                        <Grid Margin="0,10">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+                            <TextBlock
+                                Grid.Row="0"
+                                Margin="10"
+                                HorizontalAlignment="Center"
+                                FontSize="25"
+                                FontWeight="Bold"
+                                Text="Completed" />
+                            <ListBox
+                                Grid.Row="1"
+                                HorizontalContentAlignment="Stretch"
+                                AllowDrop="True"
+                                Background="Transparent"
+                                BorderThickness="0"
+                                DragOver="ListBox_DragOver"
+                                Drop="ListBox_Drop"
+                                ItemsSource="{Binding CompletedTasks}"
+                                ScrollViewer.CanContentScroll="False"
+                                SelectedItem="{Binding SelectedTask}">
+                                <ListBox.ItemContainerStyle>
+                                    <Style TargetType="ListBoxItem">
+                                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                                        <EventSetter Event="PreviewMouseLeftButtonUp" Handler="Task_Click" />
+                                        <EventSetter Event="PreviewMouseLeftButtonDown" Handler="ListBoxItem_PreviewMouseLeftButtonDown" />
+                                        <EventSetter Event="MouseMove" Handler="ListBoxItem_MouseMove" />
+                                    </Style>
+                                </ListBox.ItemContainerStyle>
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <materialDesign:Card
+                                            Margin="0,6,0,6"
+                                            Padding="8"
+                                            materialDesign:ElevationAssist.Elevation="Dp2"
+                                            Background="{DynamicResource MaterialDesignPaper}">
+                                            <materialDesign:Card.ContextMenu>
+                                                <ContextMenu DataContext="{Binding PlacementTarget.DataContext, RelativeSource={RelativeSource Self}}" Opened="ContextMenu_Opened">
+                                                    <MenuItem Click="MoveToDo_Click" Header="Move to To-Do" />
+                                                    <MenuItem Click="MoveInProgress_Click" Header="Move to In Progress" />
+                                                    <MenuItem Click="MoveInReview_Click" Header="Move to In Review" />
+                                                </ContextMenu>
+                                            </materialDesign:Card.ContextMenu>
+                                            <Grid>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="Auto" />
+                                                    <RowDefinition Height="Auto" />
+                                                </Grid.RowDefinitions>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="Auto" />
+                                                </Grid.ColumnDefinitions>
+                                                <!--  Task Title  -->
+                                                <TextBlock
+                                                    Grid.Row="0"
+                                                    Grid.Column="0"
+                                                    FontSize="20"
+                                                    FontWeight="Bold"
+                                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                                    Text="{Binding Title}"
+                                                    TextWrapping="Wrap" />
+                                                <!--  Priority Badge  -->
+                                                <Border
+                                                    Grid.Row="0"
+                                                    Grid.Column="1"
+                                                    Margin="0,0,0,10"
+                                                    Style="{StaticResource PriorityBadgeStyle}">
+                                                    <TextBlock
+                                                        FontSize="16"
+                                                        FontWeight="Bold"
+                                                        Foreground="White"
+                                                        Text="{Binding Priority}" />
+                                                </Border>
+                                                <!--  Task Description  -->
+                                                <TextBlock
+                                                    Grid.Row="1"
+                                                    Grid.Column="0"
+                                                    Grid.ColumnSpan="2"
+                                                    MinWidth="200"
+                                                    Margin="0,4,0,0"
+                                                    HorizontalAlignment="Left"
+                                                    FontSize="16"
+                                                    Foreground="{DynamicResource MaterialDesignBody}"
+                                                    Text="{Binding Description}"
+                                                    TextTrimming="CharacterEllipsis"
+                                                    TextWrapping="Wrap" />
+                                                <!--  Created Date (bottom-right corner)  -->
+                                                <Border
+                                                    Grid.Row="1"
+                                                    Grid.Column="1"
+                                                    Margin="8,0,0,0"
+                                                    Padding="2"
+                                                    HorizontalAlignment="Right"
+                                                    VerticalAlignment="Bottom"
+                                                    BorderThickness="2"
+                                                    CornerRadius="5">
+                                                    <Border.BorderBrush>
+                                                        <LinearGradientBrush StartPoint="0,1" EndPoint="1,1">
+                                                            <!--<GradientStop Offset="0.0" Color="Red" />-->
+                                                            <GradientStop Offset="0.0" Color="White" />
+                                                            <GradientStop Offset="1.0" Color="Black" />
+                                                            <!--<GradientStop Offset="1.0" Color="Green" />-->
+                                                        </LinearGradientBrush>
+                                                    </Border.BorderBrush>
+                                                    <TextBlock
+                                                        FontSize="16"
+                                                        Foreground="{DynamicResource MaterialDesignBody}"
+                                                        Text="{Binding StartDate, StringFormat=d}" />
+                                                </Border>
+                                            </Grid>
+                                        </materialDesign:Card>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </Grid>
+                    </materialDesign:Card>
+                </Grid>
+            </Grid>
+        </ScrollViewer>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <lvc:PieChart
+                Grid.Column="0"
+                MinHeight="150"
+                Margin="10"
+                LegendPosition="Top"
+                Series="{Binding TaskStatusSeries, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <lvc:CartesianChart
+                Grid.Column="1"
+                MinHeight="150"
+                Margin="20"
+                LegendPosition="Top"
+                Series="{Binding PrioritySeries, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                XAxes="{Binding XAxes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                YAxes="{Binding YAxes, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <materialDesign:Card
+                Grid.Column="2"
+                Margin="10"
+                Padding="5"
+                materialDesign:ElevationAssist.Elevation="Dp4"
+                UniformCornerRadius="6">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <TextBlock
+                        Margin="0,0,0,5"
+                        HorizontalAlignment="Center"
+                        FontSize="20"
+                        FontWeight="Bold"
+                        Text="Latest Comments" />
+
+                    <ListBox
+                        Grid.Row="1"
+                        MaxHeight="300"
+                        Background="Transparent"
+                        BorderThickness="0"
+                        ItemsSource="{Binding Comments}"
+                        ScrollViewer.CanContentScroll="False"
+                        ScrollViewer.VerticalScrollBarVisibility="Auto">
+
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <materialDesign:Card
+                                    Margin="0,6,0,6"
+                                    Padding="10"
+                                    Background="{DynamicResource MaterialDesignPaper}">
+                                    <StackPanel>
+                                        <StackPanel Orientation="Horizontal">
+                                            <TextBlock FontWeight="Bold" Text="{Binding Username, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                                            <TextBlock
+                                                Margin="10,0,0,0"
+                                                HorizontalAlignment="Right"
+                                                FontSize="12"
+                                                Foreground="Gray"
+                                                Text="{Binding Timestamp, StringFormat={}{0:g}}" />
+                                        </StackPanel>
+
+                                        <TextBlock
+                                            Margin="0,4,0,0"
+                                            FontSize="14"
+                                            FontWeight="SemiBold"
+                                            Foreground="DarkSlateBlue"
+                                            Text="{Binding TaskTitle}" />
+
+                                        <TextBlock
+                                            Margin="0,2,0,0"
+                                            Foreground="{DynamicResource MaterialDesignBody}"
+                                            Text="{Binding Message}"
+                                            TextWrapping="Wrap" />
+                                    </StackPanel>
+                                </materialDesign:Card>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </Grid>
+            </materialDesign:Card>
+        </Grid>
+
+    </Grid>
+</UserControl>

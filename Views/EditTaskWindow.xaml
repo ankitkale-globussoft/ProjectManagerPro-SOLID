@@ -1,0 +1,204 @@
+﻿<Window
+    x:Class="ProjectManagerPro_SOLID.Views.EditTaskWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="clr-namespace:ProjectManagerPro_SOLID.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    x:Name="EditWindow"
+    Title="Edit Task"
+    Width="450"
+    Height="Auto"
+    Icon="/Assets/Images/logo.ico"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    mc:Ignorable="d">
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer
+            Grid.Row="0"
+            HorizontalScrollBarVisibility="Disabled"
+            VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <TextBlock
+                    x:Name="CreatorName"
+                    Margin="0,0,0,10"
+                    FontSize="15"
+                    FontWeight="Bold"
+                    Foreground="#1E88E5"
+                    Text="{Binding CreatorName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                <TextBlock Text="Title:" />
+                <TextBox
+                    x:Name="TitleBox"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsReadOnly="{Binding IsReadOnly}"
+                    Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    x:Name="TitleError"
+                    FontSize="12"
+                    Foreground="Red"
+                    Text="{Binding TitleError}" />
+
+                <TextBlock Margin="0,10,0,0" Text="Assigned To:" />
+                <ComboBox
+                    x:Name="AssignedToBox"
+                    IsEnabled="{Binding CanEdit}"
+                    ItemsSource="{Binding Developers}"
+                    SelectedItem="{Binding SelectedAssignedTo, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock
+                                FontFamily="Arial Black"
+                                FontSize="14"
+                                FontWeight="DemiBold"
+                                Text="{Binding Username}" />
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+                <TextBlock
+                    x:Name="AssignedToError"
+                    FontSize="12"
+                    Foreground="Red"
+                    Text="{Binding AssignedToError}" />
+
+                <TextBlock Margin="0,10,0,0" Text="Priority:" />
+                <ComboBox
+                    x:Name="PriorityBox"
+                    Margin="0,5"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsEnabled="{Binding CanEdit}"
+                    SelectedValue="{Binding SelectedPriority, Mode=TwoWay}"
+                    SelectedValuePath="Content">
+                    <ComboBoxItem Content="VeryHigh" />
+                    <ComboBoxItem Content="High" />
+                    <ComboBoxItem Content="Medium" />
+                    <ComboBoxItem Content="Least" />
+                    <ComboBoxItem Content="VeryLeast" />
+                </ComboBox>
+                <TextBlock
+                    x:Name="PriorityError"
+                    FontSize="12"
+                    Foreground="Red"
+                    Text="{Binding PriorityError}" />
+
+                <TextBlock Margin="0,10,0,0" Text="Start Date:" />
+                <DatePicker
+                    x:Name="StartDatePicker"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsEnabled="{Binding CanEdit}"
+                    SelectedDate="{Binding StartDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    x:Name="StartDateError"
+                    FontSize="12"
+                    Foreground="Red"
+                    Text="{Binding StartDateError}" />
+
+                <TextBlock Margin="0,10,0,0" Text="Due Date:" />
+                <DatePicker
+                    x:Name="DueDatePicker"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsEnabled="{Binding CanEdit}"
+                    SelectedDate="{Binding DueDate, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                <TextBlock
+                    x:Name="DueDateError"
+                    FontSize="12"
+                    Foreground="Red"
+                    Text="{Binding DueDateError}" />
+
+                <TextBlock Margin="0,10,0,0" Text="Description:" />
+                <TextBox
+                    x:Name="DescriptionBox"
+                    MaxHeight="150"
+                    Padding="5"
+                    AcceptsReturn="True"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    IsReadOnly="{Binding IsReadOnly}"
+                    Text="{Binding Description, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
+                <TextBlock
+                    x:Name="DescriptionError"
+                    FontSize="12"
+                    Foreground="Red"
+                    Text="{Binding DescriptionError}" />
+
+                <TextBlock Margin="0,10,0,0" Text="Comments:" />
+                <!--<ListBox x:Name="CommentsListBox" Height="100"/>-->
+                <ListBox
+                    x:Name="CommentsListBox"
+                    Height="120"
+                    ItemsSource="{Binding Comments}"
+                    ScrollViewer.CanContentScroll="False">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate>
+                            <Border
+                                Margin="2"
+                                Padding="5"
+                                BorderBrush="LightGray"
+                                BorderThickness="1">
+                                <StackPanel>
+                                    <TextBlock FontWeight="Bold" Text="{Binding UserName}" />
+                                    <TextBlock
+                                        FontSize="16"
+                                        FontWeight="SemiBold"
+                                        Text="{Binding Message}"
+                                        TextWrapping="Wrap" />
+                                    <TextBlock
+                                        FontSize="10"
+                                        Foreground="Gray"
+                                        Text="{Binding Timestamp}" />
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+
+                <!--  Add New Comment  -->
+                <TextBlock Margin="0,10,0,5" Text="Add a Comment:" />
+                <TextBox
+                    AcceptsReturn="True"
+                    FontSize="16"
+                    FontWeight="SemiBold"
+                    Text="{Binding CommentText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                    TextWrapping="Wrap" />
+                <Button
+                    Width="120"
+                    Margin="0,5,0,0"
+                    Command="{Binding AddCommentCommand}"
+                    Content="Add Comment" />
+            </StackPanel>
+        </ScrollViewer>
+
+        <DockPanel
+            Grid.Row="1"
+            Margin="0,10,0,0"
+            LastChildFill="False">
+            <Button
+                x:Name="DeleteButton"
+                Width="120"
+                Background="Red"
+                Command="{Binding DeleteTaskCommand}"
+                Content="Delete Task"
+                DockPanel.Dock="Left"
+                Foreground="White"
+                Visibility="{Binding EditButtonsVisibility}" />
+            <Button
+                x:Name="SaveButton"
+                Width="120"
+                Click="Save_Click"
+                Command="{Binding SaveChangesCommand}"
+                Content="Save Changes"
+                DockPanel.Dock="Right"
+                Visibility="{Binding EditButtonsVisibility}" />
+        </DockPanel>
+    </Grid>
+</Window>
