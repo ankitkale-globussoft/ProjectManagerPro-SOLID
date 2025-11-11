@@ -21,4 +21,9 @@ namespace ProjectManagerPro_SOLID.Models
         public TaskItem TaskItem { get; set; }
 
     }
+    public class ProjectComment
+    {
+        public string ID { get; set; }
+        List<Comment> Comments { get; set; }
+    }
 }

@@ -28,6 +28,7 @@ namespace ProjectManagerPro_SOLID.ViewModels
 
         [ObservableProperty]
         private Project selectedProject;
+
         partial void OnSelectedProjectChanged(Project value)
         {
             _ = LoadTaskForProject();
@@ -70,7 +71,6 @@ namespace ProjectManagerPro_SOLID.ViewModels
         {
             CurrentUser = user;
             LoadProjects();
-            LoadCommentsForProject();
         }
 
         [RelayCommand]
@@ -143,6 +143,18 @@ namespace ProjectManagerPro_SOLID.ViewModels
             if (Projects.Any())
             {
                 SelectedProject = Projects.FirstOrDefault();
+
+                FirebaseHelper.ListenToComments(null, SelectedProject.ProjectID, commentsList =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        Comments.Clear();
+                        foreach (var comment in commentsList.OrderByDescending(c => c.Timestamp))
+                        {
+                            Comments.Add(comment);
+                        }
+                    });
+                });
             }
             else
             {
@@ -153,24 +165,30 @@ namespace ProjectManagerPro_SOLID.ViewModels
 
         private async Task LoadTaskForProject()
         {
-            if(SelectedProject != null && SelectedProject.ProjectID != null)
+            if (SelectedProject != null && SelectedProject.ProjectID != null)
             {
                 // stop listening to previous project 
-                if(_currentListeningProjectID != SelectedProject.ProjectID)
+                if (_currentListeningProjectID != SelectedProject.ProjectID)
                 {
                     FirebaseHelper.StopListeningToTasks();
                     _currentListeningProjectID = SelectedProject.ProjectID;
                 }
-
                 var tasks = await FirebaseHelper.GetTasks(SelectedProject.ProjectID);
                 UpdateTaskCollections(tasks);
-
+                var is_updating = false;
                 // Start listening for real-time updates
-                FirebaseHelper.ListenToTaskChanges(SelectedProject.ProjectID, tasks =>
+                FirebaseHelper.ListenToTaskChanges(SelectedProject.ProjectID, async tasks => 
                 {
                     var u_task = tasks.FirstOrDefault();
-                    ShowTaskNotification.Show(u_task);
-                    // update ui
+                    if (u_task != null && u_task.isNOtified == false && !(is_updating))
+                    {
+                        is_updating = true;
+                        ShowTaskNotification.Show(u_task);
+                        u_task.isNOtified = true;
+                        await FirebaseHelper.UpdateTask(u_task);
+                        is_updating = false;
+                    }
+
                     Application.Current.Dispatcher.Invoke(() =>
                     {
                         UpdateTaskCollections(tasks);
@@ -320,41 +338,6 @@ namespace ProjectManagerPro_SOLID.ViewModels
             OnPropertyChanged(nameof(XAxes));
             OnPropertyChanged(nameof(YAxes));
 
-        }
-
-        private async Task LoadCommentsForProject()
-        {
-            if (SelectedProject != null && SelectedProject.ProjectID != null)
-            {
-                // Stop listening to previous project comments
-                if (_currentListeningProjectIDForComments != SelectedProject.ProjectID)
-                {
-                    FirebaseHelper.StopListeningToComments();
-                    _currentListeningProjectIDForComments = SelectedProject.ProjectID;
-                }
-
-                // Initial load
-                var comments = await FirebaseHelper.GetProjectComments(SelectedProject.ProjectID);
-                UpdateComments(comments);
-
-                // Start listening for real-time updates
-                FirebaseHelper.ListenToProjectComments(SelectedProject.ProjectID, comments =>
-                {
-                    Application.Current.Dispatcher.Invoke(() =>
-                    {
-                        UpdateComments(comments);
-                    });
-                });
-            }
-        }
-
-        private void UpdateComments(List<Comment> commentsList)
-        {
-            Comments.Clear();
-            foreach (var comment in commentsList.OrderByDescending(c => c.Timestamp))
-            {
-                Comments.Add(comment);
-            }
         }
 
     }

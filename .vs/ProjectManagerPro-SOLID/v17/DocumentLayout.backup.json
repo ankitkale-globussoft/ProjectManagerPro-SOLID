@@ -1,0 +1,137 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|c:\\users\\ankitkale\\documents\\dotnet projects\\projectmanagerpro-solid\\helpers\\firebasehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|solutionrelative:helpers\\firebasehelper.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|c:\\users\\ankitkale\\documents\\dotnet projects\\projectmanagerpro-solid\\models\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|solutionrelative:models\\comment.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|c:\\users\\ankitkale\\documents\\dotnet projects\\projectmanagerpro-solid\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|solutionrelative:viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|c:\\users\\ankitkale\\documents\\dotnet projects\\projectmanagerpro-solid\\viewmodels\\edittaskviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|solutionrelative:viewmodels\\edittaskviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|c:\\users\\ankitkale\\documents\\dotnet projects\\projectmanagerpro-solid\\helpers\\showtasknotification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|solutionrelative:helpers\\showtasknotification.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|c:\\users\\ankitkale\\documents\\dotnet projects\\projectmanagerpro-solid\\views\\edittaskwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{D5D28E08-A632-4293-8842-704B38637C2F}|ProjectManagerPro-SOLID.csproj|solutionrelative:views\\edittaskwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 5,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{d78612c7-9962-4b83-95d9-268046dad23a}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{1fc202d4-d401-403c-9834-5b218574bb67}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Comment.cs",
+              "DocumentMoniker": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\Models\\Comment.cs",
+              "RelativeDocumentMoniker": "Models\\Comment.cs",
+              "ToolTip": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\Models\\Comment.cs",
+              "RelativeToolTip": "Models\\Comment.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABcAAAAfAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T11:18:29.792Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "FirebaseHelper.cs",
+              "DocumentMoniker": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\Helpers\\FirebaseHelper.cs",
+              "RelativeDocumentMoniker": "Helpers\\FirebaseHelper.cs",
+              "ToolTip": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\Helpers\\FirebaseHelper.cs",
+              "RelativeToolTip": "Helpers\\FirebaseHelper.cs",
+              "ViewState": "AgIAAKcAAAAAAAAAAAAiwLAAAAAwAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T06:05:15.168Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "EditTaskViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\ViewModels\\EditTaskViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\EditTaskViewModel.cs",
+              "ToolTip": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\ViewModels\\EditTaskViewModel.cs",
+              "RelativeToolTip": "ViewModels\\EditTaskViewModel.cs",
+              "ViewState": "AgIAAGsAAAAAAAAAAAAUwH4AAABDAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T07:14:37.419Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "ShowTaskNotification.cs",
+              "DocumentMoniker": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\Helpers\\ShowTaskNotification.cs",
+              "RelativeDocumentMoniker": "Helpers\\ShowTaskNotification.cs",
+              "ToolTip": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\Helpers\\ShowTaskNotification.cs",
+              "RelativeToolTip": "Helpers\\ShowTaskNotification.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABUAAAAzAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T05:56:01.742Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "MainViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\ViewModels\\MainViewModel.cs",
+              "RelativeDocumentMoniker": "ViewModels\\MainViewModel.cs",
+              "ToolTip": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\ViewModels\\MainViewModel.cs",
+              "RelativeToolTip": "ViewModels\\MainViewModel.cs",
+              "ViewState": "AgIAAHUAAAAAAAAAAAAAAJIAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-11-11T05:21:04.798Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "EditTaskWindow.xaml",
+              "DocumentMoniker": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\Views\\EditTaskWindow.xaml",
+              "RelativeDocumentMoniker": "Views\\EditTaskWindow.xaml",
+              "ToolTip": "C:\\Users\\ankitkale\\Documents\\Dotnet Projects\\ProjectManagerPro-SOLID\\Views\\EditTaskWindow.xaml",
+              "RelativeToolTip": "Views\\EditTaskWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2025-11-11T05:13:36.987Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

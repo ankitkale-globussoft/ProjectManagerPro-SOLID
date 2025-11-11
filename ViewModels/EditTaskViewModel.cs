@@ -124,7 +124,7 @@ namespace ProjectManagerPro_SOLID.ViewModels
 
         public void StartListeningToComments(string taskItemId)
         {
-            FirebaseHelper.ListenToComments(taskItemId, commentsList =>
+            FirebaseHelper.ListenToComments(taskItemId, _task.ProjectID, commentsList =>
             {
                 // Make sure UI updates happen on the UI thread
                 Application.Current.Dispatcher.Invoke(() =>
@@ -156,7 +156,7 @@ namespace ProjectManagerPro_SOLID.ViewModels
                 Timestamp = DateTime.Now
             };
 
-            var ok = await FirebaseHelper.AddTaskComment(comment);
+            var ok = await FirebaseHelper.AddTaskComment(comment, _task.ProjectID);
             if (ok)
                 CommentText = String.Empty;
         }

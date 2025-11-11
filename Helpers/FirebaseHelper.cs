@@ -138,13 +138,14 @@ namespace ProjectManagerPro_SOLID.Helpers
             }
         }
 
-        internal static async Task<bool> AddTaskComment(Comment comment)
+        internal static async Task<bool> AddTaskComment(Comment comment, string projectId)
         {
             await EnsureInitializedAsync();
             try
             {
                 await _client.
                     Child("Comments")
+                    .Child(projectId)
                     .Child(comment.TaskItemId)
                     .Child(comment.Id)
                     .PutAsync(comment);
@@ -157,23 +158,29 @@ namespace ProjectManagerPro_SOLID.Helpers
             }
         }
 
-        internal static async Task<List<Comment>> GetComments(string taskItemId)
+        internal static async Task<List<Comment>> GetComments(string taskItemId, string projectId)
         {
             try
             {
                 if (taskItemId != null)
                 {
                     var comments = await _client
-                        .Child("Comments")
+                        .Child($"Comments/{projectId}")
                         .Child(taskItemId)
                         .OnceAsync<Comment>();
                     return comments.Select(c => c.Object).ToList();
                 }
                 else
                 {
+                    var commentsData = new List<Comment>();
                     var comments = await _client
-                        .Child("Comments")
+                        .Child($"Comments/{projectId}")
                         .OnceAsync<Comment>();
+                    foreach(var data in comments)
+                    {
+                        var lstComments = await _client.Child($"Comments/{projectId}/{data.Key}").OnceAsync<Comment>();
+                        commentsData.AddRange(lstComments.Select(x => x.Object));
+                    }
                     return comments.Select(c => c.Object).ToList();
                 }
 
@@ -183,34 +190,6 @@ namespace ProjectManagerPro_SOLID.Helpers
                 Console.WriteLine($"Error loading comments: {ex.Message}");
                 return new List<Comment>();
             }
-        }
-
-        internal static void ListenToProjectComments(string projectId, Action<List<Comment>> onCommentsChanged)
-        {
-            _commentStreamSubscription?.Dispose();
-
-            if (string.IsNullOrEmpty(projectId))
-                return;
-
-            _commentStreamSubscription = _client
-                .Child($"Comments")
-                .AsObservable<Comment>()
-                .Subscribe(
-                    async firebaseEvent =>
-                    {
-                        try
-                        {
-                            // Fetch all comments for the project
-                            var comments = await GetProjectComments(projectId);
-                            onCommentsChanged?.Invoke(comments);
-                        }
-                        catch (Exception ex)
-                        {
-                            Console.WriteLine($"Error fetching project comments: {ex.Message}");
-                        }
-                    },
-                    ex => Console.WriteLine($"Firebase comment stream error: {ex.Message}")
-                );
         }
 
         internal static async Task<List<Comment>> GetProjectComments(string projectId)
@@ -226,7 +205,7 @@ namespace ProjectManagerPro_SOLID.Helpers
                 // Fetch comments for each task
                 foreach (var task in tasks)
                 {
-                    var taskComments = await GetComments(task.TaskID);
+                    var taskComments = await GetComments(task.TaskID, projectId);
                     allComments.AddRange(taskComments);
                 }
 
@@ -286,13 +265,13 @@ namespace ProjectManagerPro_SOLID.Helpers
                 );
         }
 
-        internal static void ListenToComments(string taskItemId, Action<List<Comment>> onCommentsChanged)
+        internal static void ListenToComments(string taskItemId, string projectId, Action<List<Comment>> onCommentsChanged)
         {
             _commentStreamSubscription?.Dispose();
             if (string.IsNullOrEmpty(taskItemId))
             {
                 _commentStreamSubscription = _client
-                .Child($"Comments")
+                .Child($"Comments/{projectId}")
                 .AsObservable<Comment>()
                 .Subscribe(
                     async firebaseEvent =>
@@ -300,7 +279,7 @@ namespace ProjectManagerPro_SOLID.Helpers
                         try
                         {
                             // Whenever a comment changes, fetch all comments again
-                            var comments = await GetComments(taskItemId);
+                            var comments = await GetComments(taskItemId, projectId);
                             onCommentsChanged?.Invoke(comments);
                         }
                         catch (Exception ex)
@@ -311,11 +290,10 @@ namespace ProjectManagerPro_SOLID.Helpers
                     ex => Console.WriteLine($"Firebase comment stream error: {ex.Message}")
                 );
             }
-
             else
             {
                 _commentStreamSubscription = _client
-                    .Child($"Comments/{taskItemId}")
+                    .Child($"Comments/{projectId}/{taskItemId}")
                     .AsObservable<Comment>()
                     .Subscribe(
                         async firebaseEvent =>
@@ -323,7 +301,7 @@ namespace ProjectManagerPro_SOLID.Helpers
                             try
                             {
                                 // Whenever a comment changes, fetch all comments again
-                                var comments = await GetComments(taskItemId);
+                                var comments = await GetComments(taskItemId, projectId);
                                 onCommentsChanged?.Invoke(comments);
                             }
                             catch (Exception ex)

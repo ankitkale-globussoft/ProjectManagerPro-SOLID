@@ -40,7 +40,7 @@
                     IsReadOnly="{Binding IsReadOnly}"
                     Text="{Binding Title, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 <TextBlock
-                    x:Name="TitleError"
+                    x:Name="TitleError" 
                     FontSize="12"
                     Foreground="Red"
                     Text="{Binding TitleError}" />
