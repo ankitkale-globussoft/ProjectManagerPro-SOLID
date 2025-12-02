@@ -64,6 +64,8 @@ namespace ProjectManagerPro_SOLID.ViewModels
 
         private string _currentListeningProjectIDForComments;
 
+        private bool _isProjectListening = false;
+
         private HashSet<string> _seenTaskIds = new();
 
 
@@ -124,7 +126,7 @@ namespace ProjectManagerPro_SOLID.ViewModels
 
                 var taskWindow = new AddTaskWindow(CurrentUser, SelectedProject);
                 taskWindow.Owner = Application.Current.MainWindow;
-                taskWindow.Show();
+                taskWindow.ShowDialog();
             }
             finally
             {
@@ -143,7 +145,74 @@ namespace ProjectManagerPro_SOLID.ViewModels
             if (Projects.Any())
             {
                 SelectedProject = Projects.FirstOrDefault();
+                await LoadCommentsForProject();
+            }
 
+            Application.Current.MainWindow.Opacity = 1;
+            Loading = Visibility.Collapsed;
+
+            if (!_isProjectListening)
+            {
+                _isProjectListening = true;
+                FirebaseHelper.ListenToProjectChanges(projects =>
+                {
+                    Application.Current.Dispatcher.Invoke(() =>
+                    {
+                        UpdateProjectCollection(projects);
+                    });
+                });
+
+            }
+        }
+
+        private void UpdateProjectCollection(List<Project> updatedProjects)
+        {
+            // Store currently selected project ID
+            string selectedProjectId = SelectedProject?.ProjectID;
+
+            // Update the collection
+            Projects.Clear();
+            foreach (var project in updatedProjects)
+            {
+                Projects.Add(project);
+            }
+
+            // Restore selection or select first
+            if (!string.IsNullOrEmpty(selectedProjectId))
+            {
+                SelectedProject = Projects.FirstOrDefault(p => p.ProjectID == selectedProjectId);
+            }
+
+            if (SelectedProject == null && Projects.Any())
+            {
+                SelectedProject = Projects.FirstOrDefault();
+            }
+        }
+
+
+        private async Task LoadCommentsForProject()
+        {
+            if (SelectedProject != null && SelectedProject.ProjectID != null)
+            {
+                // Stop listening to previous project comments
+                if (_currentListeningProjectIDForComments != SelectedProject.ProjectID)
+                {
+                    FirebaseHelper.StopListeningToComments();
+                    _currentListeningProjectIDForComments = SelectedProject.ProjectID;
+                }
+
+                // Initial load of comments
+                //var comments = await FirebaseHelper.GetComments(null, SelectedProject.ProjectID);
+                //Application.Current.Dispatcher.Invoke(() =>
+                //{
+                //    Comments.Clear();
+                //    foreach (var comment in comments.OrderByDescending(c => c.Timestamp))
+                //    {
+                //        Comments.Add(comment);
+                //    }
+                //});
+
+                // Start listening for real-time updates
                 FirebaseHelper.ListenToComments(null, SelectedProject.ProjectID, commentsList =>
                 {
                     Application.Current.Dispatcher.Invoke(() =>
@@ -156,12 +225,8 @@ namespace ProjectManagerPro_SOLID.ViewModels
                     });
                 });
             }
-            else
-            {
-                Application.Current.MainWindow.Opacity = 1;
-                Loading = Visibility.Collapsed;
-            }
         }
+
 
         private async Task LoadTaskForProject()
         {
@@ -179,8 +244,8 @@ namespace ProjectManagerPro_SOLID.ViewModels
                 // Start listening for real-time updates
                 FirebaseHelper.ListenToTaskChanges(SelectedProject.ProjectID, async tasks => 
                 {
-                    var u_task = tasks.FirstOrDefault();
-                    if (u_task != null && u_task.isNOtified == false && !(is_updating))
+                    var u_task = tasks.OrderByDescending(t => t.ModifiedDateTime).FirstOrDefault();
+                    if (u_task != null && u_task.AssignedTo.NodeID == CurrentUser.NodeID && u_task.isNOtified == false && !(is_updating))
                     {
                         is_updating = true;
                         ShowTaskNotification.Show(u_task);
@@ -296,6 +361,7 @@ namespace ProjectManagerPro_SOLID.ViewModels
 
         public void Cleanup()
         {
+            FirebaseHelper.StopListeningToProjects();
             FirebaseHelper.StopListeningToTasks();
         }
 

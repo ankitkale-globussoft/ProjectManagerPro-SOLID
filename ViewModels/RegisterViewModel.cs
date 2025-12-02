@@ -97,7 +97,8 @@ namespace ProjectManagerPro_SOLID.ViewModels
                 {
                     if (RememberMe)
                         DirHelper.SaveInfo(UserToSave);
-                    // Application.Current.MainWindow.Content = new MainView(RegisterUser);
+                    RegisterUser.Password = Password;
+                    Application.Current.MainWindow.Content = new LoginView(RegisterUser);
                 }
                 else
                 {

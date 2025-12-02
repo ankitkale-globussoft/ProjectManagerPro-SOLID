@@ -25,6 +25,7 @@ namespace ProjectManagerPro_SOLID.Helpers
         private static readonly object _lock = new();
         private static IDisposable _taskStreamSubscription;
         internal static IDisposable _commentStreamSubscription;
+        private static IDisposable _projectStreamSubscription;
 
         public static async Task EnsureInitializedAsync()
         {
@@ -127,7 +128,7 @@ namespace ProjectManagerPro_SOLID.Helpers
                 await _client.
                     Child("Tasks")
                     .Child(task.ProjectID)
-                    .Child(task.Title)
+                    .Child(task.TaskID)
                     .PutAsync(task);
                 return true;
             }
@@ -162,8 +163,11 @@ namespace ProjectManagerPro_SOLID.Helpers
         {
             try
             {
+                await EnsureInitializedAsync();
+
                 if (taskItemId != null)
                 {
+                    // Get comments for a specific task
                     var comments = await _client
                         .Child($"Comments/{projectId}")
                         .Child(taskItemId)
@@ -172,18 +176,22 @@ namespace ProjectManagerPro_SOLID.Helpers
                 }
                 else
                 {
+                    // Get all comments for the project
                     var commentsData = new List<Comment>();
-                    var comments = await _client
+                    var taskNodes = await _client
                         .Child($"Comments/{projectId}")
-                        .OnceAsync<Comment>();
-                    foreach(var data in comments)
-                    {
-                        var lstComments = await _client.Child($"Comments/{projectId}/{data.Key}").OnceAsync<Comment>();
-                        commentsData.AddRange(lstComments.Select(x => x.Object));
-                    }
-                    return comments.Select(c => c.Object).ToList();
-                }
+                        .OnceAsync<object>(); // Get all task nodes
 
+                    foreach (var taskNode in taskNodes)
+                    {
+                        var taskComments = await _client
+                            .Child($"Comments/{projectId}/{taskNode.Key}")
+                            .OnceAsync<Comment>();
+                        commentsData.AddRange(taskComments.Select(x => x.Object));
+                    }
+
+                    return commentsData; // Return commentsData, not comments!
+                }
             }
             catch (Exception ex)
             {
@@ -232,7 +240,7 @@ namespace ProjectManagerPro_SOLID.Helpers
                 await _client
                     .Child("Tasks")
                     .Child(task.ProjectID)
-                    .Child(task.Title)
+                    .Child(task.TaskID)
                     .DeleteAsync();
                 return true;
             }
@@ -350,7 +358,7 @@ namespace ProjectManagerPro_SOLID.Helpers
                 await _client
                     .Child("Tasks")
                     .Child(task.ProjectID)
-                    .Child(task.Title)
+                    .Child(task.TaskID)
                     .PatchAsync(updates);
 
                 return true;
@@ -373,6 +381,33 @@ namespace ProjectManagerPro_SOLID.Helpers
 
             return snapshot.Values.ToList();
         }
+
+        internal static void ListenToProjectChanges(Action<List<Project>> onProjectsChanged)
+        {
+            _projectStreamSubscription?.Dispose();
+
+            _projectStreamSubscription = _client
+                .Child("Projects")
+                .AsObservable<Project>()
+                .Subscribe(
+                    firebaseEvent =>
+                    {
+                        Task.Run(async () =>
+                        {
+                            var projects = await GetProjects();
+                            onProjectsChanged?.Invoke(projects);
+                        });
+                    },
+                    ex => Console.WriteLine($"Firebase Projects stream error: {ex.Message}")
+                );
+        }
+
+        internal static void StopListeningToProjects()
+        {
+            _projectStreamSubscription?.Dispose();
+            _projectStreamSubscription = null;
+        }
+
 
     }
 }

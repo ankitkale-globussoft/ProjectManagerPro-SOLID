@@ -77,11 +77,8 @@ namespace ProjectManagerPro_SOLID.Views
                     Application.Current.MainWindow.Opacity = 0.5;
                     var editWindow = new EditTaskWindow(task, vm.CurrentUser);
                     editWindow.Owner = Application.Current.MainWindow;
-                    editWindow.Show();
-                    editWindow.Closing += (s, e) =>
-                    {
-                        Application.Current.MainWindow.Opacity = 1;
-                    };
+                    editWindow.ShowDialog();
+                    Application.Current.MainWindow.Opacity = 1;
                 }
             }
         }
